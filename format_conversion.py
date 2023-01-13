@@ -171,6 +171,7 @@ elif (args.format == "8.20"):
         df[new_header] = c1
 else:
     print("wrong format. Please use either 'ieee754' or '8.20'")
+    exit(0)
 
 print("writing output to: ", args.output)
 df.to_csv(args.output)
