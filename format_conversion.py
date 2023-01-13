@@ -72,7 +72,7 @@ Example:
 python format_conversion.py --input powertrace_combined_Idle.csv --output mldata.csv --config "IA_C0_ANY:ieee754 AVG_NUM_CORES:ieee754"
 python format_conversion.py --input powertrace_combined_Idle.csv --header "IA_C0_ANY AVG_NUM_CORES" --output mldata.csv --format ieee754
 """)
-parser.add_argument('--format', action='store', dest='format', default="ieee754", help="define either ieee754 or 8.20 formatting")
+parser.add_argument('--format', action='store', dest='format', help="define either ieee754 or 8.20 formatting")
 parser.add_argument('--input', action='store', dest='input', required=True, help="Input filename")
 parser.add_argument('--output', action='store', dest='output', default='output.csv', help="Output filename")
 parser.add_argument('--header', action='store', dest='header', help="The header in the csv file to be converted")
@@ -89,6 +89,7 @@ header_format = {}
 
 # Formating the headers
 if (args.config is not None):
+    print("config available")
     configs = re.split("\s+", args.config)
     for conf in configs:
         header_name, header_formatting = re.split("\:", conf)
@@ -105,7 +106,31 @@ if (args.header is not None):
 
 df = pd.read_csv(args.input)
 
-if (args.format == "ieee754"):
+if (args.config is not None):
+    print("converting")
+
+    for header in header_list:
+        c1 = []
+        if (not header in df.columns):
+            print("missing column header %s", header)
+            exit(0)
+        else:
+            col_length = len(df[header])
+
+        for i in range(col_length):
+            if (not math.isnan(df[header][i])):
+                value2 = int(df[header][i])
+                if (header_format[header] == "ieee754"):
+                    c1.append(convertTofloat(value2))
+                elif (header_format[header] == "8.20"):
+                    c1.append(to_float(value2))
+            else:
+                c1.append("")
+
+        new_header = header + "_FLOAT"
+        df[new_header] = c1
+
+elif (args.format == "ieee754"):
     print("converting ieee754 format")
     for header in header_list:
         c1 = []
