@@ -1,5 +1,5 @@
 # format_conversion
-## Convert the format output from powertrace   
+## Convert the output format from powertrace   
 
 $ python format_conversion.py --help   
 usage: format_conversion.py [-h] [--format FORMAT] --input INPUT [--output OUTPUT] [--header HEADER] [--config CONFIG]   
